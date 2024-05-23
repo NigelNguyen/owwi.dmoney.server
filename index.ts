@@ -2,13 +2,19 @@ import express, { Request, Response } from 'express'
 import cors from 'cors'
 import session from 'express-session'
 import connectMongoDBSession from 'connect-mongodb-session'
-import authRouter from './routes/auth'
-import transactionRouter from './routes/transaction'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { IPlainObject } from './types/common'
 import User from './models/User'
 import { cookiesParser } from './utils/cookies'
+
+import authRouter from './routes/auth'
+import transactionRouter from './routes/transaction'
+import recordRouter from './routes/record'
+import categoryRouter from './routes/category'
+import partnerRouter from './routes/partner'
+import typeRouter from './routes/type'
+
 const app = express()
 dotenv.config()
 
@@ -71,12 +77,16 @@ app.use(async (req: Request, res: Response, next) => {
   next()
 })
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', async (req: Request, res: Response) => {
   return res.send('Hello World!')
 })
 
 app.use(authRouter)
 app.use(transactionRouter)
+app.use(recordRouter)
+app.use(categoryRouter)
+app.use(partnerRouter)
+app.use(typeRouter)
 
 mongoose.connect(MONGO_URI).then(() => {
   app.listen(PORT, () => {

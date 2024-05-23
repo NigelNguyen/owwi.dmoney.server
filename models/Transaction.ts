@@ -3,8 +3,8 @@ const Schema = mongoose.Schema
 
 const transactionSchema = Schema(
   {
-    user: { type: Schema.Types.ObjectId, require: true },
-    content: { type: String, require: true }
+    user: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    content: { type: String, required: true }
   },
   { timestamp: true }
 )
