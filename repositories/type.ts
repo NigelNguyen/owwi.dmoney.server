@@ -9,3 +9,8 @@ export const getTypesRepository = async ()=>{
     const types = await Type.find();
     return types;
 }
+
+export const getTypeByIdRepository = async ({id}:{id:string})=>{
+  const types = await Type.findById(id);
+    return types;
+}

@@ -7,14 +7,16 @@ export const createRecordRepository = async (data: {
   type: string
   description: string
   user: string
+  partnerName: string
+  categoryName: string
+  typeName: string
 }) => {
   const record = await new Record(data)
   return await record.save()
 }
 
 export const getRecordByUserRepository = async ({ userId }: { userId: string }) => {
-  const record = await Record.find({ user: userId }).populate(['partner', 'category', 'type'])
-  return record
+  return await Record.find({ user: userId }) //.populate(['partner', 'category', 'type']);
 }
 
 export const getRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {
@@ -24,11 +26,14 @@ export const getRecordByIdRepository = async ({ id, user }: { id: string; user: 
 
 export const updateRecordRepository = async (data: {
   id: string
-  amount: number
-  category: string
-  partner: string
-  type: string
-  description: string
+  amount?: number
+  category?: string
+  partner?: string
+  type?: string
+  description?: string
+  partnerName?: string
+  categoryName?: string
+  typeName?: string
 }) => {
   const { id, ...left } = data
   const record = await Record.findOneAndUpdate({ _id: id }, left)

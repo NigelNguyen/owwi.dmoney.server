@@ -31,7 +31,7 @@ export const registerService = async (req: Request, res: Response) => {
 }
 
 export const loginService = async (req: Request, res: Response) => {
-  return tryCatch(async () => {
+  return await tryCatch(async () => {
     const { email, password, metaMaskAddress } = req.body
     const session = req.session as IPlainObject
 
@@ -88,6 +88,20 @@ export const loginService = async (req: Request, res: Response) => {
           }
         })
       }
+    }
+  })()
+}
+
+export const logoutService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          return res.status(403).send({ message: 'Failed to logout!' })
+        } else {
+          return res.send({ message: 'Logout Successfully!' })
+        }
+      })
     }
   })()
 }

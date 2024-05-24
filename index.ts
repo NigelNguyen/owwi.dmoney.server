@@ -56,29 +56,30 @@ app.use(express.json())
 
 app.use(async (req: Request, res: Response, next) => {
   const sessionID = cookiesParser(req.headers.cookie || '').sessionID
-
   if (sessionID) {
     store.get(sessionID, async (_err, _session) => {
       const session = _session as IPlainObject
-      const user = await User.findOne({ _id: session.user?._id || '' })
 
-      if (!user) {
-        return next()
+      if (session?.user) {
+        const user = await User.findOne({ _id: session.user?._id || '' })
+
+        if (!user) {
+          return next()
+        }
+
+        ;(req as IPlainObject).user = user
+
+        const reqSession = req.session as IPlainObject
+        if (reqSession) {
+          reqSession.user = user
+          reqSession.sessionID = req.sessionID
+        }
+
+        next()
       }
-
-      ;(req as IPlainObject).user = user
-
-      const reqSession = req.session as IPlainObject
-      reqSession.user = user
-      reqSession.sessionID = req.sessionID
-      next()
     })
   }
   next()
-})
-
-app.get('/', async (req: Request, res: Response) => {
-  return res.send('Hello World!')
 })
 
 app.use(authRouter)

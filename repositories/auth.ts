@@ -7,6 +7,7 @@ export const findAccount = async ({ email, metaMaskAddress }: { email?: string; 
   })
   return user
 }
+
 export const registerNormalAccount = async ({ email, password }: { email: string; password: string }) => {
   const user = await new User({
     email,

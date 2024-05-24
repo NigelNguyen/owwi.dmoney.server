@@ -9,16 +9,16 @@ import {
 import { IPlainObject } from '../types/common'
 import { TPartner } from '../models/Partner'
 
-export const createPartnerService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const createPartnerService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { name, description } = req.body
     await createPartnerRepository({ description, name, user: (req.session as IPlainObject).user._id })
     return res.status(201).send({ message: 'Create Partner Successfully.' })
   })(req, res)
 }
 
-export const updatePartnerService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const updatePartnerService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { id, name, description } = req.body
     const partner = await getPartnerByIdRepository({ id, user: (req.session as IPlainObject).user._id })
     if (partner) {
@@ -30,8 +30,8 @@ export const updatePartnerService = (req: Request, res: Response) => {
   })(req, res)
 }
 
-export const getPartnerByIdService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const getPartnerByIdService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { id } = req.params
     const partner = await getPartnerByIdRepository({
       id,
@@ -41,8 +41,8 @@ export const getPartnerByIdService = (req: Request, res: Response) => {
   })(req, res)
 }
 
-export const getPartnerByUserService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const getPartnerByUserService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const partners = await getPartnerByUserRepository({
       user: (req.session as IPlainObject).user._id
     })

@@ -9,16 +9,16 @@ import {
 import { IPlainObject } from '../types/common'
 import { TCategory } from '../models/Category'
 
-export const createCategoryService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const createCategoryService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { name, description } = req.body
     await createCategoryRepository({ description, name, user: (req.session as IPlainObject).user._id })
     return res.status(201).send({ message: 'Create Category Successfully.' })
   })(req, res)
 }
 
-export const updateCategoryService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const updateCategoryService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { id, name, description } = req.body
     const category = await getCategoryByIdRepository({ id, user: (req.session as IPlainObject).user._id })
     if (category) {
@@ -30,8 +30,8 @@ export const updateCategoryService = (req: Request, res: Response) => {
   })(req, res)
 }
 
-export const getCategoryByIdService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const getCategoryByIdService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const { id } = req.params
     const category = await getCategoryByIdRepository({
       id,
@@ -41,15 +41,16 @@ export const getCategoryByIdService = (req: Request, res: Response) => {
   })(req, res)
 }
 
-export const getCategoryByUserService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const getCategoryByUserService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
     const categories = await getCategoryByUserRepository({
       user: (req.session as IPlainObject).user._id
     })
     return res.send({
       message: 'Get Categories Successfully.',
       content: {
-        categories: categories?.map((item: TCategory) => ({ id: item._id, name: item.name, description: item.description })) || []
+        categories:
+          categories?.map((item: TCategory) => ({ id: item._id, name: item.name, description: item.description })) || []
       }
     })
   })(req, res)

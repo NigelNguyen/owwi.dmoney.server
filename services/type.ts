@@ -5,7 +5,7 @@ import { tryCatch } from './../utils/try'
 import { createTypeRepository } from '../repositories/type'
 
 export const initTypes = async (req: Request, res: Response) => {
-  tryCatch(async () => {
+  return await tryCatch(async () => {
     const typeList = [
       { name: 'Income', description: 'Your money you have earned' },
       { name: 'Outcome', description: 'Your money you have spent' },
@@ -24,7 +24,7 @@ export const initTypes = async (req: Request, res: Response) => {
 }
 
 export const getTypesService = async (req: Request, res: Response) => {
-  tryCatch(async () => {
+  return await tryCatch(async () => {
     const types = await getTypesRepository()
 
     return res.send({

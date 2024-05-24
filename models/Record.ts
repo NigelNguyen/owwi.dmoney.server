@@ -8,7 +8,10 @@ const recordSchema = Schema(
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: true },
     partner: { type: Schema.Types.ObjectId, ref: 'Partner', required: false },
     amount: { type: Number, required: true },
-    description: { type: String, required: true }
+    description: { type: String, required: false },
+    typeName: { type: String, required: false },
+    categoryName: { type: String, required: false },
+    partnerName: { type: String, required: false }
   },
   { timestamp: true }
 )
@@ -18,18 +21,9 @@ export default mongoose.model('Record', recordSchema)
 export type TRecord = {
   _id: string
   user: string
-  type: {
-    _id: string
-    name: string
-  }
-  category: {
-    _id: string
-    name: string
-  }
-  partner: {
-    _id: string
-    name: string
-  }
+  typeName: string
+  categoryName: string
+  partnerName: string
   amount: number
   description: string
 }

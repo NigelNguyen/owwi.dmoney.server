@@ -8,18 +8,27 @@ import {
 } from '../repositories/record'
 import { IPlainObject } from '../types/common'
 import { TRecord } from '../models/Record'
+import { getPartnerByIdRepository, getPartnerByUserRepository } from '../repositories/Partner'
+import { getTypeByIdRepository, getTypesRepository } from '../repositories/type'
+import { getCategoryByIdRepository, getCategoryByUserRepository } from '../repositories/Category'
 
 export const createRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { amount, category, description, partner, type } = req.body
+    const { amount, category, description, partner, type, partnerName, categoryName, typeName } = req.body
+    const user = (req.session as IPlainObject).user._id
+
     await createRecordRepository({
       amount,
       category,
       description,
       partner,
       type,
-      user: (req.session as IPlainObject).user._id
+      user,
+      partnerName,
+      categoryName,
+      typeName,
     })
+
     return res.status(201).send({ message: 'Create Record Successfully.' })
   })(req, res)
 }
@@ -55,24 +64,26 @@ export const getRecordByIdService = (req: Request, res: Response) => {
   })(req, res)
 }
 
-export const getRecordsByUserService = (req: Request, res: Response) => {
-  tryCatch(async () => {
+export const getRecordsByUserService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
+    const user = (req.session as IPlainObject).user._id
     const records = await getRecordByUserRepository({
-      userId: (req.session as IPlainObject).user._id
+      userId: user
     })
 
+    const formattedRecord = records?.map((item: TRecord) => ({
+      id: item._id,
+      amount: item.amount,
+      type: item.typeName || '',
+      partner: item.partnerName || '',
+      category: item.categoryName || '',
+      description: item.description
+    })).reverse();
     return res.send({
       message: 'Get Records Successfully.',
       content: {
-        records: records?.map((item: TRecord) => ({
-          id: item._id,
-          amount: item.amount,
-          type: item.type.name,
-          partner: item.partner.name,
-          category: item.category.name,
-          description: item.description
-        }))
+        records: formattedRecord
       }
     })
-  })(req, res)
+  }, 'getRecordsByUserService')(req, res)
 }
