@@ -10,6 +10,7 @@ const recordSchema = Schema(
     amount: { type: Number, required: true },
     description: { type: String, required: false },
     typeName: { type: String, required: false },
+    date: { type: Date, required: true },
     categoryName: { type: String, required: false },
     partnerName: { type: String, required: false }
   },
@@ -25,5 +26,6 @@ export type TRecord = {
   categoryName: string
   partnerName: string
   amount: number
+  date: Date
   description: string
 }

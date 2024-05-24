@@ -8,13 +8,10 @@ import {
 } from '../repositories/record'
 import { IPlainObject } from '../types/common'
 import { TRecord } from '../models/Record'
-import { getPartnerByIdRepository, getPartnerByUserRepository } from '../repositories/Partner'
-import { getTypeByIdRepository, getTypesRepository } from '../repositories/type'
-import { getCategoryByIdRepository, getCategoryByUserRepository } from '../repositories/Category'
 
 export const createRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { amount, category, description, partner, type, partnerName, categoryName, typeName } = req.body
+    const { amount, category, description, partner, type, date, partnerName, categoryName, typeName } = req.body
     const user = (req.session as IPlainObject).user._id
 
     await createRecordRepository({
@@ -23,10 +20,11 @@ export const createRecordService = (req: Request, res: Response) => {
       description,
       partner,
       type,
+      date,
       user,
       partnerName,
       categoryName,
-      typeName,
+      typeName
     })
 
     return res.status(201).send({ message: 'Create Record Successfully.' })
@@ -35,21 +33,20 @@ export const createRecordService = (req: Request, res: Response) => {
 
 export const updateRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { id, amount, category, description, partner, type } = req.body
-    const record = await getRecordByIdRepository({ id, user: (req.session as IPlainObject).user._id })
-    if (record) {
-      await updateRecordRepository({
-        id,
-        amount,
-        category,
-        description,
-        partner,
-        type
-      })
-      return res.send({ message: 'Update Record Successfully.' })
-    } else {
-      return res.status(401).send({ message: 'Access Denied!' })
-    }
+    const { id, amount, category, description, partner, type, date, partnerName, categoryName, typeName } = req.body
+    await updateRecordRepository({
+      id,
+      amount,
+      category,
+      description,
+      partner,
+      type,
+      date,
+      partnerName,
+      categoryName,
+      typeName
+    })
+    return res.send({ message: 'Update Record Successfully.' })
   })(req, res)
 }
 
@@ -71,14 +68,17 @@ export const getRecordsByUserService = async (req: Request, res: Response) => {
       userId: user
     })
 
-    const formattedRecord = records?.map((item: TRecord) => ({
-      id: item._id,
-      amount: item.amount,
-      type: item.typeName || '',
-      partner: item.partnerName || '',
-      category: item.categoryName || '',
-      description: item.description
-    })).reverse();
+    const formattedRecord = records
+      ?.map((item: TRecord) => ({
+        id: item._id,
+        amount: item.amount,
+        type: item.typeName || '',
+        date: item.date.toISOString().split('T')[0].split('-').reverse().join('-'),
+        partner: item.partnerName || '',
+        category: item.categoryName || '',
+        description: item.description
+      }))
+      
     return res.send({
       message: 'Get Records Successfully.',
       content: {

@@ -7,7 +7,7 @@ const userSchema = Schema(
     email: { type: String, require: false },
     metaMaskAddress: { type: String, require: false },
     role: { type: String, require: false },
-    isConfirmedEmail: { type: Boolean, require: false }
+    isConfirmedEmail: { type: Boolean, require: false },
   },
   { timestamp: true }
 )

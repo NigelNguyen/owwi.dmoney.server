@@ -5,6 +5,7 @@ export const createRecordRepository = async (data: {
   category: string
   partner: string
   type: string
+  date: string
   description: string
   user: string
   partnerName: string
@@ -16,7 +17,7 @@ export const createRecordRepository = async (data: {
 }
 
 export const getRecordByUserRepository = async ({ userId }: { userId: string }) => {
-  return await Record.find({ user: userId }) //.populate(['partner', 'category', 'type']);
+  return await Record.find({ user: userId }).sort({ date: -1 })
 }
 
 export const getRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {
@@ -30,6 +31,7 @@ export const updateRecordRepository = async (data: {
   category?: string
   partner?: string
   type?: string
+  date: string
   description?: string
   partnerName?: string
   categoryName?: string
