@@ -14,6 +14,7 @@ import recordRouter from './routes/record'
 import categoryRouter from './routes/category'
 import partnerRouter from './routes/partner'
 import typeRouter from './routes/type'
+import statisticRouter from './routes/statistic'
 
 const app = express()
 dotenv.config()
@@ -88,6 +89,7 @@ app.use(recordRouter)
 app.use(categoryRouter)
 app.use(partnerRouter)
 app.use(typeRouter)
+app.use(statisticRouter)
 
 mongoose.connect(MONGO_URI).then(() => {
   app.listen(PORT, () => {
