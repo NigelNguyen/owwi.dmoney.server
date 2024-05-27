@@ -8,6 +8,7 @@ import {
 } from '../repositories/Category'
 import { IPlainObject } from '../types/common'
 import { TCategory } from '../models/Category'
+import { updateRecordByCategory } from '../repositories/record'
 
 export const createCategoryService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
@@ -20,13 +21,17 @@ export const createCategoryService = async (req: Request, res: Response) => {
 export const updateCategoryService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
     const { id, name, description } = req.body
-    const category = await getCategoryByIdRepository({ id, user: (req.session as IPlainObject).user._id })
+    const user = (req.session as IPlainObject).user._id
+    const category = await getCategoryByIdRepository({ id, user})
+    const oldName = category.name;
     if (category) {
-      await updateCategoryRepository({ id, description, name })
-      return res.send({ message: 'Update Category Successfully.' })
+      res.send({ message: 'Update Category Successfully.' })
     } else {
       return res.status(401).send({ message: 'Access Denied!' })
     }
+    await updateCategoryRepository({ id, description, name })
+    await updateRecordByCategory({newCategoryName: name, oldCategoryName: oldName, user})
+    return
   })(req, res)
 }
 

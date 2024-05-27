@@ -12,6 +12,7 @@ export const registerService = async (req: Request, res: Response) => {
 
     if (!metaMaskAddress) {
       const isExistAccount = await findAccount({ email })
+      
       if (isExistAccount) {
         return res.status(400).send({ message: 'Email is already register' })
       }

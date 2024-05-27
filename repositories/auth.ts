@@ -1,6 +1,7 @@
 import User from '../models/User'
 
 export const findAccount = async ({ email, metaMaskAddress }: { email?: string; metaMaskAddress?: string }) => {
+  
   const user = await User.findOne({
     ...(email ? { email } : {}),
     ...(metaMaskAddress ? { metaMaskAddress } : {})

@@ -46,3 +46,15 @@ export const deleteRecordByIdRepository = async ({ id }: { id: string }) => {
   const record = await Record.findOneAndDelete({ _id: id })
   return record
 }
+
+export const updateRecordByPartner = async (data: { user: string; oldPartnerName: string; newPartnerName: string }) => {
+  const { oldPartnerName, newPartnerName, user } = data;
+  const records = await Record.updateMany({ user, partnerName: oldPartnerName }, { partnerName: newPartnerName })
+  return records;
+}
+
+export const updateRecordByCategory = async (data: { user: string; oldCategoryName: string; newCategoryName: string }) => {
+  const { oldCategoryName, newCategoryName, user } = data;
+  const records = await Record.updateMany({ user, categoryName: oldCategoryName }, { categoryName: newCategoryName })
+  return records;
+}

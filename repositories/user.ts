@@ -12,3 +12,9 @@ export const updateUserRepository = async ({
     new: true
   })
 }
+
+export const updateUserByIdRepository = async ({ id, data }: { id: string; data: IPlainObject }) => {
+  return await User.findOneAndUpdate({ _id: id }, data, {
+    new: true
+  })
+}

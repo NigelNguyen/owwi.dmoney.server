@@ -8,6 +8,7 @@ import {
 } from '../repositories/Partner'
 import { IPlainObject } from '../types/common'
 import { TPartner } from '../models/Partner'
+import { updateRecordByPartner } from '../repositories/record'
 
 export const createPartnerService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
@@ -20,13 +21,17 @@ export const createPartnerService = async (req: Request, res: Response) => {
 export const updatePartnerService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
     const { id, name, description } = req.body
-    const partner = await getPartnerByIdRepository({ id, user: (req.session as IPlainObject).user._id })
+    const user = (req.session as IPlainObject).user._id
+    const partner = await getPartnerByIdRepository({ id, user })
+    const oldName = partner.name
     if (partner) {
-      await updatePartnerRepository({ id, description, name })
-      return res.send({ message: 'Update Partner Successfully.' })
+      res.send({ message: 'Update Partner Successfully.' })
     } else {
-      return res.status(401).send({ message: 'Access Denied!' })
+      return res.status(401).send({ message: 'Access Denied' })
     }
+    await updatePartnerRepository({ id, description, name })
+    await updateRecordByPartner({ user, newPartnerName: name, oldPartnerName: oldName })
+    return
   })(req, res)
 }
 
@@ -49,7 +54,8 @@ export const getPartnerByUserService = async (req: Request, res: Response) => {
     return res.send({
       message: 'Get Partners Successfully.',
       content: {
-        partners: partners?.map((item: TPartner) => ({ id: item._id, name: item.name, description: item.description })) || []
+        partners:
+          partners?.map((item: TPartner) => ({ id: item._id, name: item.name, description: item.description })) || []
       }
     })
   })(req, res)
