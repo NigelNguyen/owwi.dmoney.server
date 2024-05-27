@@ -17,7 +17,7 @@ export const createRecordRepository = async (data: {
 }
 
 export const getRecordByUserRepository = async ({ userId }: { userId: string }) => {
-  return await Record.find({ user: userId }).sort({ date: -1 })
+  return await Record.find({ user: userId }).sort({ date: -1 }) //.skip(0).limit(15)
 }
 
 export const getRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {
@@ -48,13 +48,17 @@ export const deleteRecordByIdRepository = async ({ id }: { id: string }) => {
 }
 
 export const updateRecordByPartner = async (data: { user: string; oldPartnerName: string; newPartnerName: string }) => {
-  const { oldPartnerName, newPartnerName, user } = data;
+  const { oldPartnerName, newPartnerName, user } = data
   const records = await Record.updateMany({ user, partnerName: oldPartnerName }, { partnerName: newPartnerName })
-  return records;
+  return records
 }
 
-export const updateRecordByCategory = async (data: { user: string; oldCategoryName: string; newCategoryName: string }) => {
-  const { oldCategoryName, newCategoryName, user } = data;
+export const updateRecordByCategory = async (data: {
+  user: string
+  oldCategoryName: string
+  newCategoryName: string
+}) => {
+  const { oldCategoryName, newCategoryName, user } = data
   const records = await Record.updateMany({ user, categoryName: oldCategoryName }, { categoryName: newCategoryName })
-  return records;
+  return records
 }

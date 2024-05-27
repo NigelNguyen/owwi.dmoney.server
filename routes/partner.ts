@@ -5,8 +5,11 @@ import {
   getPartnersByUserController,
   updatePartnerController
 } from '../controllers/partner'
+import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
+
+router.use(isAuthenticated)
 
 router.post('/partner', createPartnerController)
 

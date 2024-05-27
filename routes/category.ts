@@ -5,8 +5,11 @@ import {
   getCategoryByIdController,
   updateCategoryController
 } from '../controllers/category'
+import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
+
+router.use(isAuthenticated)
 
 router.post('/category', createCategoryController)
 

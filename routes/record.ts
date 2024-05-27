@@ -1,7 +1,15 @@
 import express from 'express'
-import { createRecordController, getRecordsByIdController, getRecordsByUserController, updateRecordController } from '../controllers/record'
+import {
+  createRecordController,
+  getRecordsByIdController,
+  getRecordsByUserController,
+  updateRecordController
+} from '../controllers/record'
+import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
+
+router.use(isAuthenticated)
 
 router.post('/record', createRecordController)
 
