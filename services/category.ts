@@ -1,11 +1,7 @@
+import { createCategoryRepository, getCategoryByIdRepository, getCategoryByUserRepository, updateCategoryRepository } from './../repositories/category';
 import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
-import {
-  createCategoryRepository,
-  getCategoryByIdRepository,
-  getCategoryByUserRepository,
-  updateCategoryRepository
-} from '../repositories/Category'
+
 import { IPlainObject } from '../types/common'
 import { TCategory } from '../models/Category'
 import { updateRecordByCategory } from '../repositories/record'

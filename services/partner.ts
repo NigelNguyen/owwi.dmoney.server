@@ -1,11 +1,7 @@
+import { createPartnerRepository, getPartnerByIdRepository, getPartnerByUserRepository, updatePartnerRepository } from './../repositories/partner';
 import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
-import {
-  createPartnerRepository,
-  getPartnerByIdRepository,
-  getPartnerByUserRepository,
-  updatePartnerRepository
-} from '../repositories/Partner'
+
 import { IPlainObject } from '../types/common'
 import { TPartner } from '../models/Partner'
 import { updateRecordByPartner } from '../repositories/record'
