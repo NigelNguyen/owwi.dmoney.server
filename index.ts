@@ -32,6 +32,8 @@ const store = new MongoDBStore({
   collection: 'UserSessions'
 })
 
+app.set('trust proxy', 1)
+
 app.use(
   cors({
     origin: PRODUCTION ? FE_CLIENT_URL?.split(',') : true,
@@ -97,5 +99,4 @@ mongoose.connect(MONGO_URI).then(() => {
   })
 })
 
-
-export default app;
+export default app
