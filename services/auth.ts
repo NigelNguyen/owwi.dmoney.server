@@ -8,11 +8,11 @@ const SALT = Number(process.env.SALT) || 12
 
 export const registerService = async (req: Request, res: Response) => {
   return tryCatch(async () => {
-    const { email, password, metaMaskAddress } = req.body
+    const { email = '', password = '', metaMaskAddress = '', signature = '' } = req.body
 
     if (!metaMaskAddress) {
       const isExistAccount = await findAccount({ email })
-      
+
       if (isExistAccount) {
         return res.status(400).send({ message: 'Email is already register' })
       }
@@ -22,9 +22,10 @@ export const registerService = async (req: Request, res: Response) => {
     } else {
       const existAccount = await findAccount({ metaMaskAddress })
       if (existAccount) {
-        return res.status(400).send({ message: 'MetaMask Address is already register' })
+        return res.status(409).send({ message: 'MetaMask Address is already register' })
       } else {
-        await registerMetaMaskAccount({ metaMaskAddress })
+        const hashedSignature = await bcrypt.hash(signature, SALT)
+        await registerMetaMaskAccount({ metaMaskAddress, signature: hashedSignature })
       }
     }
     return res.status(201).send({ message: 'Register Successfully' })
@@ -33,7 +34,7 @@ export const registerService = async (req: Request, res: Response) => {
 
 export const loginService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { email, password, metaMaskAddress } = req.body
+    const { email = '', password = '', metaMaskAddress = '', signature = '' } = req.body
     const session = req.session as IPlainObject
 
     if (!metaMaskAddress) {
@@ -62,20 +63,29 @@ export const loginService = async (req: Request, res: Response) => {
     } else {
       const existAccount = await findAccount({ metaMaskAddress })
       if (existAccount) {
-        session.sessionID = req.sessionID
-        session.user = existAccount
-        return res.status(200).send({
-          message: 'Login Successfully',
-          content: {
-            email: existAccount.email,
-            metaMaskAddress: existAccount.metaMaskAddress,
-            isConfirmedEmail: existAccount.isConfirmedEmail,
-            role: existAccount.role,
-            sessionToken: req.sessionID
-          }
-        })
+        const isMatchedSignature = await bcrypt.compare(signature, existAccount.signature)
+        
+        if (isMatchedSignature) {
+          session.sessionID = req.sessionID
+          session.user = existAccount
+          return res.status(200).send({
+            message: 'Login Successfully!',
+            content: {
+              email: existAccount.email,
+              metaMaskAddress: existAccount.metaMaskAddress,
+              isConfirmedEmail: existAccount.isConfirmedEmail,
+              role: existAccount.role,
+              sessionToken: req.sessionID
+            }
+          })
+        } else {
+          return res.status(401).send({
+            message: 'Login Failed! Signature did not match!'
+          })
+        }
       } else {
-        const newUser = await registerMetaMaskAccount({ metaMaskAddress })
+        const hashedSignature = await bcrypt.hash(signature, SALT)
+        const newUser = await registerMetaMaskAccount({ metaMaskAddress, signature: hashedSignature })
         session.sessionID = req.sessionID
         session.user = newUser
         return res.status(200).send({

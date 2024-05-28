@@ -1,4 +1,9 @@
-import { createCategoryRepository, getCategoryByIdRepository, getCategoryByUserRepository, updateCategoryRepository } from './../repositories/category';
+import {
+  createCategoryRepository,
+  getCategoryByIdRepository,
+  getCategoryByUserRepository,
+  updateCategoryRepository
+} from './../repositories/category'
 import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
 
@@ -8,7 +13,7 @@ import { updateRecordByCategory } from '../repositories/record'
 
 export const createCategoryService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { name, description } = req.body
+    const { name = '', description = '' } = req.body
     await createCategoryRepository({ description, name, user: (req.session as IPlainObject).user._id })
     return res.status(201).send({ message: 'Create Category Successfully.' })
   })(req, res)
@@ -16,24 +21,24 @@ export const createCategoryService = async (req: Request, res: Response) => {
 
 export const updateCategoryService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { id, name, description } = req.body
+    const { id = '', name = '', description = '' } = req.body
     const user = (req.session as IPlainObject).user._id
-    const category = await getCategoryByIdRepository({ id, user})
-    const oldName = category.name;
+    const category = await getCategoryByIdRepository({ id, user })
+    const oldName = category.name
     if (category) {
       res.send({ message: 'Update Category Successfully.' })
     } else {
       return res.status(401).send({ message: 'Access Denied!' })
     }
     await updateCategoryRepository({ id, description, name })
-    await updateRecordByCategory({newCategoryName: name, oldCategoryName: oldName, user})
+    await updateRecordByCategory({ newCategoryName: name, oldCategoryName: oldName, user })
     return
   })(req, res)
 }
 
 export const getCategoryByIdService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { id } = req.params
+    const { id = '' } = req.params
     const category = await getCategoryByIdRepository({
       id,
       user: (req.session as IPlainObject).user._id

@@ -6,6 +6,7 @@ const userSchema = Schema(
     password: { type: String, require: true },
     email: { type: String, require: false },
     metaMaskAddress: { type: String, require: false },
+    signature: { type: String, require: false },
     role: { type: String, require: false },
     isConfirmedEmail: { type: Boolean, require: false },
   },

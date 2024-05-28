@@ -11,7 +11,17 @@ import { TRecord } from '../models/Record'
 
 export const createRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { amount, category, description, partner, type, date, partnerName, categoryName, typeName } = req.body
+    const {
+      amount = '',
+      category = '',
+      description = '',
+      partner = '',
+      type = '',
+      date = '',
+      partnerName = '',
+      categoryName = '',
+      typeName = ''
+    } = req.body
     const user = (req.session as IPlainObject).user._id
 
     await createRecordRepository({
@@ -33,7 +43,18 @@ export const createRecordService = (req: Request, res: Response) => {
 
 export const updateRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { id, amount, category, description, partner, type, date, partnerName, categoryName, typeName } = req.body
+    const {
+      id = '',
+      amount = '',
+      category = '',
+      description = '',
+      partner = '',
+      type = '',
+      date = '',
+      partnerName = '',
+      categoryName = '',
+      typeName = ''
+    } = req.body
     await updateRecordRepository({
       id,
       amount,
@@ -52,7 +73,7 @@ export const updateRecordService = (req: Request, res: Response) => {
 
 export const getRecordByIdService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { id } = req.params
+    const { id='' } = req.params
     const record = await getRecordByIdRepository({
       id,
       user: (req.session as IPlainObject).user._id
@@ -68,17 +89,16 @@ export const getRecordsByUserService = async (req: Request, res: Response) => {
       userId: user
     })
 
-    const formattedRecord = records
-      ?.map((item: TRecord) => ({
-        id: item._id,
-        amount: item.amount,
-        type: item.typeName || '',
-        date: item.date.toISOString().split('T')[0].split('-').reverse().join('-'),
-        partner: item.partnerName || '',
-        category: item.categoryName || '',
-        description: item.description
-      }))
-      
+    const formattedRecord = records?.map((item: TRecord) => ({
+      id: item._id,
+      amount: item.amount,
+      type: item.typeName || '',
+      date: item.date.toISOString().split('T')[0].split('-').reverse().join('-'),
+      partner: item.partnerName || '',
+      category: item.categoryName || '',
+      description: item.description
+    }))
+
     return res.send({
       message: 'Get Records Successfully.',
       content: {

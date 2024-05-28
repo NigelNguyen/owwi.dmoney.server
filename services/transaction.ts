@@ -4,7 +4,7 @@ import { IPlainObject } from '../types/common'
 import { Request, Response } from 'express'
 
 export const createTransactionService = async (req: Request, res: Response) => {
-  const { transaction, metaMaskAddress } = req.body
+  const { transaction='', metaMaskAddress='' } = req.body
   const session = req.session as IPlainObject
   const newTransaction = await createTransactionRepository({
     transaction: transaction,
