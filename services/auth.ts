@@ -3,16 +3,16 @@ import { Request, Response } from 'express'
 import bcrypt from 'bcrypt'
 import { registerMetaMaskAccount, registerNormalAccount, findAccount } from '../repositories/auth'
 import { IPlainObject } from '../types/common'
+import { checkValidSignature } from '../utils/checkValidSignature'
 
 const SALT = Number(process.env.SALT) || 12
 
 export const registerService = async (req: Request, res: Response) => {
   return tryCatch(async () => {
-    const { email = '', password = '', metaMaskAddress = '', signature = '' } = req.body
-
+    const { email = '', password = '', metaMaskAddress = '', signature = '', signatureMessage = '' } = req.body
+    console.log({ email, password, metaMaskAddress, signature, signatureMessage })
     if (!metaMaskAddress) {
       const isExistAccount = await findAccount({ email })
-
       if (isExistAccount) {
         return res.status(400).send({ message: 'Email is already register' })
       }
@@ -21,15 +21,19 @@ export const registerService = async (req: Request, res: Response) => {
       await registerNormalAccount({ email, password: hashedPassword })
     } else {
       const existAccount = await findAccount({ metaMaskAddress })
+      console.log({ existAccount })
       if (existAccount) {
         return res.status(409).send({ message: 'MetaMask Address is already register' })
       } else {
+        const isValid = checkValidSignature(signatureMessage, signature, metaMaskAddress)
+        if (!isValid) return res.status(422).send({ message: 'Invalid Signature' })
+
         const hashedSignature = await bcrypt.hash(signature, SALT)
         await registerMetaMaskAccount({ metaMaskAddress, signature: hashedSignature })
       }
     }
     return res.status(201).send({ message: 'Register Successfully' })
-  })()
+  }, 'registerService')()
 }
 
 export const loginService = async (req: Request, res: Response) => {
@@ -64,7 +68,7 @@ export const loginService = async (req: Request, res: Response) => {
       const existAccount = await findAccount({ metaMaskAddress })
       if (existAccount) {
         const isMatchedSignature = await bcrypt.compare(signature, existAccount.signature)
-        
+
         if (isMatchedSignature) {
           session.sessionID = req.sessionID
           session.user = existAccount
