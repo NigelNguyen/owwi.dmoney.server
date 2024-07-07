@@ -102,8 +102,8 @@ export const updateRecordRepository = async (data: {
   return record
 }
 
-export const deleteRecordByIdRepository = async ({ id }: { id: string }) => {
-  const record = await Record.findOneAndDelete({ _id: id })
+export const deleteRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {
+  const record = await Record.findOneAndDelete({ _id: id, user })
   return record
 }
 

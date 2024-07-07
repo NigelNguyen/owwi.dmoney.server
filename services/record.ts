@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
 import {
   createRecordRepository,
+  deleteRecordByIdRepository,
   getRecordByIdRepository,
   getRecordByUserRepository,
   updateRecordRepository
@@ -44,7 +45,6 @@ export const createRecordService = (req: Request, res: Response) => {
 export const updateRecordService = (req: Request, res: Response) => {
   tryCatch(async () => {
     const {
-      id = '',
       amount = '',
       category = '',
       description = '',
@@ -55,6 +55,7 @@ export const updateRecordService = (req: Request, res: Response) => {
       categoryName = '',
       typeName = ''
     } = req.body
+    const { id = '' } = req.params
     await updateRecordRepository({
       id,
       amount,
@@ -113,4 +114,15 @@ export const getRecordsByUserService = async (req: Request, res: Response) => {
       }
     })
   }, 'getRecordsByUserService')(req, res)
+}
+
+export const deleteRecordByIdService = (req: Request, res: Response) => {
+  tryCatch(async () => {
+    const { id = '' } = req.params
+    await deleteRecordByIdRepository({
+      id,
+      user: (req.session as IPlainObject).user._id
+    })
+    return res.send({ message: 'Delete Record Successfully.' })
+  }, 'Delete record')(req, res)
 }

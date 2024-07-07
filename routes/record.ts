@@ -1,6 +1,7 @@
 import express from 'express'
 import {
   createRecordController,
+  deleteRecordController,
   getRecordsByIdController,
   getRecordsByUserController,
   updateRecordController
@@ -17,6 +18,8 @@ router.get('/records', getRecordsByUserController)
 
 router.get('/record/:id', getRecordsByIdController)
 
-router.put('/record', updateRecordController)
+router.post('/record/:id/update', updateRecordController)
+
+router.post('/record/:id/delete', deleteRecordController)
 
 export default router
