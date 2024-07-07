@@ -63,10 +63,21 @@ export const getRecordByUserRepository = async ({
     $options: 'i' // Case-insensitive search
   }
 
-  return await Record.find(queryCondition)
+  const records = await Record.find(queryCondition)
     .sort({ date: -1 })
-    .skip((page - 1) * pageSize)
-    .limit(pageSize)
+    .skip((page - 1) * Number(pageSize))
+    .limit(Number(pageSize))
+
+  const total = await Record.countDocuments(queryCondition)
+
+  return {
+    records,
+    pagination: {
+      total,
+      page,
+      pageSize
+    }
+  }
 }
 
 export const getRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {

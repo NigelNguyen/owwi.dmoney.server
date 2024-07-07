@@ -91,7 +91,7 @@ export const getRecordsByUserService = async (req: Request, res: Response) => {
       ...query
     })
 
-    const formattedRecord = records?.map((item: TRecord) => ({
+    const formattedRecord = records.records?.map((item: TRecord) => ({
       id: item._id,
       amount: item.amount,
       type: item.typeName || '',
@@ -105,6 +105,11 @@ export const getRecordsByUserService = async (req: Request, res: Response) => {
       message: 'Get Records Successfully.',
       content: {
         records: formattedRecord
+      },
+      pagination: {
+        total: Math.ceil(records.pagination.total / records.pagination.pageSize),
+        page: Number(records.pagination.page),
+        pageSize: Number(records.pagination.pageSize)
       }
     })
   }, 'getRecordsByUserService')(req, res)
