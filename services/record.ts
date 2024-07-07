@@ -73,7 +73,7 @@ export const updateRecordService = (req: Request, res: Response) => {
 
 export const getRecordByIdService = (req: Request, res: Response) => {
   tryCatch(async () => {
-    const { id='' } = req.params
+    const { id = '' } = req.params
     const record = await getRecordByIdRepository({
       id,
       user: (req.session as IPlainObject).user._id
@@ -85,8 +85,10 @@ export const getRecordByIdService = (req: Request, res: Response) => {
 export const getRecordsByUserService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
     const user = (req.session as IPlainObject).user._id
+    const query = req.query
     const records = await getRecordByUserRepository({
-      userId: user
+      userId: user,
+      ...query
     })
 
     const formattedRecord = records?.map((item: TRecord) => ({

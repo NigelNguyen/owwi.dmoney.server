@@ -1,4 +1,5 @@
 import Record from '../models/Record'
+import { IPlainObject } from '../types/common'
 
 export const createRecordRepository = async (data: {
   amount: number
@@ -16,8 +17,56 @@ export const createRecordRepository = async (data: {
   return await record.save()
 }
 
-export const getRecordByUserRepository = async ({ userId }: { userId: string }) => {
-  return await Record.find({ user: userId }).sort({ date: -1 }) //.skip(0).limit(15)
+export const getRecordByUserRepository = async ({
+  userId,
+  min = 0,
+  max,
+  page = 1,
+  from,
+  to = new Date(),
+  pageSize = 10,
+  description = '',
+  ...query
+}: {
+  userId: string
+  partner?: string
+  category?: string
+  description?: string
+  type?: string
+  min?: number
+  max?: number
+  from?: Date
+  to?: Date
+  page?: number
+  pageSize?: number
+}) => {
+  const queryCondition: IPlainObject = {
+    user: userId,
+    ...query
+  }
+  if (from) {
+    queryCondition.date = {
+      $gte: from,
+      $lte: to
+    }
+  }
+
+  queryCondition.amount = {
+    $gte: min || 0
+  }
+  if (max) {
+    queryCondition.amount.$lte = max
+  }
+
+  queryCondition.description = {
+    $regex: description,
+    $options: 'i' // Case-insensitive search
+  }
+
+  return await Record.find(queryCondition)
+    .sort({ date: -1 })
+    .skip((page - 1) * pageSize)
+    .limit(pageSize)
 }
 
 export const getRecordByIdRepository = async ({ id, user }: { id: string; user: string }) => {
