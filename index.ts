@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express'
+import express, { NextFunction, Request, Response } from 'express'
 import cors from 'cors'
-import session from 'express-session'
+import session, { Session, SessionData } from 'express-session'
 import connectMongoDBSession from 'connect-mongodb-session'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
@@ -57,7 +57,7 @@ app.use(
 
 app.use(express.json())
 
-app.use(async (req: Request, res: Response, next) => {
+app.use(async (req: Request, res: Response, next: NextFunction) => {
   const sessionID = cookiesParser(req.headers.cookie || '').sessionID
   if (sessionID) {
     store.get(sessionID, async (_err, _session) => {
@@ -72,17 +72,17 @@ app.use(async (req: Request, res: Response, next) => {
 
         ;(req as IPlainObject).user = user
 
-        const reqSession = req.session as IPlainObject
+        const reqSession = req.session as Session & Partial<SessionData> & {user: any, sessionID: string}
         if (reqSession) {
           reqSession.user = user
-          reqSession.sessionID = req.sessionID
+          reqSession.sessionID = req.sessionID;
         }
 
-        next()
+        return next()
       }
     })
   }
-  next()
+  return next()
 })
 
 app.use(authRouter)

@@ -1,5 +1,6 @@
 import {
   createCategoryRepository,
+  deleteCategoryByIdRepository,
   getCategoryByIdRepository,
   getCategoryByUserRepository,
   updateCategoryRepository
@@ -16,12 +17,13 @@ export const createCategoryService = async (req: Request, res: Response) => {
     const { name = '', description = '' } = req.body
     await createCategoryRepository({ description, name, user: (req.session as IPlainObject).user._id })
     return res.status(201).send({ message: 'Create Category Successfully.' })
-  })(req, res)
+  },"createCategoryService")(req, res)
 }
 
 export const updateCategoryService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { id = '', name = '', description = '' } = req.body
+    const { id = '' } = req.params
+    const { name = '', description = '' } = req.body
     const user = (req.session as IPlainObject).user._id
     const category = await getCategoryByIdRepository({ id, user })
     const oldName = category.name
@@ -33,7 +35,7 @@ export const updateCategoryService = async (req: Request, res: Response) => {
     await updateCategoryRepository({ id, description, name })
     await updateRecordByCategory({ newCategoryName: name, oldCategoryName: oldName, user })
     return
-  })(req, res)
+  },"updateCategoryService")(req, res)
 }
 
 export const getCategoryByIdService = async (req: Request, res: Response) => {
@@ -44,7 +46,18 @@ export const getCategoryByIdService = async (req: Request, res: Response) => {
       user: (req.session as IPlainObject).user._id
     })
     return res.send({ message: 'Get Category Successfully.', content: { category } })
-  })(req, res)
+  },"getCategoryByIdService")(req, res)
+}
+
+export const deleteCategoryService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
+    const { id = '' } = req.params
+    await deleteCategoryByIdRepository({
+      id,
+      user: (req.session as IPlainObject).user._id
+    })
+    return res.send({ message: 'Delete Category Successfully.' })
+  },"deleteCategoryService")(req, res)
 }
 
 export const getCategoryByUserService = async (req: Request, res: Response) => {
@@ -59,5 +72,5 @@ export const getCategoryByUserService = async (req: Request, res: Response) => {
           categories?.map((item: TCategory) => ({ id: item._id, name: item.name, description: item.description })) || []
       }
     })
-  })(req, res)
+  },"getCategoryByUserService")(req, res)
 }

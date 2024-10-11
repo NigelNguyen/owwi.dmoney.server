@@ -5,7 +5,7 @@ const isMember = (req: Request, res: Response, next: NextFunction) => {
   if ((req.session as IPlainObject)?.user?.role === 'member'){
     return next()
   }
-  return res.status(401).send({message: "Access Denied!"})
+  return res.status(403).send({message: "User do not have permission!"})
 }
 
 export default isMember;

@@ -31,5 +31,5 @@ export const getTypesService = async (req: Request, res: Response) => {
       message: 'Get Types Successfully.',
       content: { types: types.map((item: TType) => ({ id: item._id, name: item.name, description: item.description })) }
     })
-  })(req, res)
+  },"getTypesService")(req, res)
 }

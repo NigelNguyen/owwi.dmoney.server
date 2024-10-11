@@ -80,7 +80,7 @@ export const getRecordByIdService = (req: Request, res: Response) => {
       user: (req.session as IPlainObject).user._id
     })
     return res.send({ message: 'Get Record Successfully.', content: { record } })
-  })(req, res)
+  },"getRecordByIdService")(req, res)
 }
 
 export const getRecordsByUserService = async (req: Request, res: Response) => {

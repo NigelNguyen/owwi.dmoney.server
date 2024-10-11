@@ -10,16 +10,14 @@ import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
 
-router.use(isAuthenticated)
+router.post('/record', isAuthenticated, createRecordController)
 
-router.post('/record', createRecordController)
+router.get('/records', isAuthenticated, getRecordsByUserController)
 
-router.get('/records', getRecordsByUserController)
+router.get('/record/:id', isAuthenticated, getRecordsByIdController)
 
-router.get('/record/:id', getRecordsByIdController)
+router.post('/record/:id/update', isAuthenticated, updateRecordController)
 
-router.post('/record/:id/update', updateRecordController)
-
-router.post('/record/:id/delete', deleteRecordController)
+router.post('/record/:id/delete', isAuthenticated, deleteRecordController)
 
 export default router

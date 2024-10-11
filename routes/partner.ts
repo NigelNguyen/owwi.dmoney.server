@@ -3,20 +3,21 @@ import {
   createPartnerController,
   getPartnerByIdController,
   getPartnersByUserController,
-  updatePartnerController
+  updatePartnerController,
+  deletePartnerController
 } from '../controllers/partner'
 import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
 
-router.use(isAuthenticated)
+router.post('/partner', isAuthenticated, createPartnerController)
 
-router.post('/partner', createPartnerController)
+router.get('/partner/:id', isAuthenticated, getPartnerByIdController)
 
-router.get('/partner/:id', getPartnerByIdController)
+router.get('/partners', isAuthenticated, getPartnersByUserController)
 
-router.get('/partners', getPartnersByUserController)
+router.post('/partner/:id/update', isAuthenticated, updatePartnerController)
 
-router.put('/partner', updatePartnerController)
+router.post('/partner/:id/delete', isAuthenticated, deletePartnerController)
 
 export default router

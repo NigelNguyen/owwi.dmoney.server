@@ -1,6 +1,12 @@
 import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
-import { createPartnerService, getPartnerByIdService, getPartnerByUserService, updatePartnerService } from '../services/partner'
+import {
+  createPartnerService,
+  getPartnerByIdService,
+  getPartnerByUserService,
+  updatePartnerService,
+  deletePartnerByIdService
+} from '../services/partner'
 
 export const createPartnerController = async (req: Request, res: Response) => {
   return await tryCatch(createPartnerService)(req, res)
@@ -8,6 +14,9 @@ export const createPartnerController = async (req: Request, res: Response) => {
 
 export const updatePartnerController = async (req: Request, res: Response) => {
   return await tryCatch(updatePartnerService)(req, res)
+}
+export const deletePartnerController = async (req: Request, res: Response) => {
+  return await tryCatch(deletePartnerByIdService)(req, res)
 }
 
 export const getPartnerByIdController = async (req: Request, res: Response) => {

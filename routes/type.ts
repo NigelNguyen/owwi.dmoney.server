@@ -4,8 +4,6 @@ import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
 
-router.use(isAuthenticated)
-
-router.get('/types', getTypesController)
+router.get('/types', isAuthenticated, getTypesController)
 
 export default router

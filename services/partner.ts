@@ -1,4 +1,10 @@
-import { createPartnerRepository, getPartnerByIdRepository, getPartnerByUserRepository, updatePartnerRepository } from './../repositories/partner';
+import {
+  createPartnerRepository,
+  deletePartnerByIdRepository,
+  getPartnerByIdRepository,
+  getPartnerByUserRepository,
+  updatePartnerRepository
+} from './../repositories/partner'
 import { Request, Response } from 'express'
 import { tryCatch } from '../utils/try'
 
@@ -8,7 +14,7 @@ import { updateRecordByPartner } from '../repositories/record'
 
 export const createPartnerService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { name='', description='' } = req.body
+    const { name = '', description = '' } = req.body
     await createPartnerRepository({ description, name, user: (req.session as IPlainObject).user._id })
     return res.status(201).send({ message: 'Create Partner Successfully.' })
   })(req, res)
@@ -16,7 +22,8 @@ export const createPartnerService = async (req: Request, res: Response) => {
 
 export const updatePartnerService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { id='', name='', description='' } = req.body
+    const { id = '' } = req.params
+    const {  name = '', description = '' } = req.body
     const user = (req.session as IPlainObject).user._id
     const partner = await getPartnerByIdRepository({ id, user })
     const oldName = partner.name
@@ -33,13 +40,24 @@ export const updatePartnerService = async (req: Request, res: Response) => {
 
 export const getPartnerByIdService = async (req: Request, res: Response) => {
   return await tryCatch(async () => {
-    const { id='' } = req.params
+    const { id = '' } = req.params
     const partner = await getPartnerByIdRepository({
       id,
       user: (req.session as IPlainObject).user._id
     })
     return res.send({ message: 'Get Partner Successfully.', content: { partner } })
-  })(req, res)
+  }, "getPartnerByIdService")(req, res)
+}
+
+export const deletePartnerByIdService = async (req: Request, res: Response) => {
+  return await tryCatch(async () => {
+    const { id = '' } = req.params
+    await deletePartnerByIdRepository({
+      id,
+      user: (req.session as IPlainObject).user._id
+    })
+    return res.send({ message: 'Delete Partner Successfully.' })
+  },"deletePartnerByIdService")(req, res)
 }
 
 export const getPartnerByUserService = async (req: Request, res: Response) => {
@@ -54,5 +72,5 @@ export const getPartnerByUserService = async (req: Request, res: Response) => {
           partners?.map((item: TPartner) => ({ id: item._id, name: item.name, description: item.description })) || []
       }
     })
-  })(req, res)
+  },"getPartnerByUserService")(req, res)
 }

@@ -25,7 +25,7 @@ export const updateCategoryRepository = async (data: {
   return category
 }
 
-export const deleteCategoryByIdRepository = async ({ id }: { id: string }) => {
-  const category = await Category.findOneAndDelete({ _id: id })
+export const deleteCategoryByIdRepository = async ({ id, user }: { id: string; user: string }) => {
+  const category = await Category.findOneAndDelete({ _id: id, user })
   return category
 }

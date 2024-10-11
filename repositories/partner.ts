@@ -21,7 +21,7 @@ export const updatePartnerRepository = async (data: { id: string; name: string; 
   return partner
 }
 
-export const deletePartnerByIdRepository = async ({ id }: { id: string }) => {
-  const partner = await Partner.findOneAndDelete({ _id: id })
+export const deletePartnerByIdRepository = async ({ id, user }: { id: string; user: string }) => {
+  const partner = await Partner.findOneAndDelete({ _id: id, user })
   return partner
 }

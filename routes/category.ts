@@ -1,6 +1,7 @@
 import express from 'express'
 import {
   createCategoryController,
+  deleteCategoryController,
   getCategoriesByUserController,
   getCategoryByIdController,
   updateCategoryController
@@ -9,14 +10,14 @@ import isAuthenticated from '../middlewares/isAuthenticated'
 
 const router = express.Router()
 
-router.use(isAuthenticated)
+router.post('/category', isAuthenticated, createCategoryController)
 
-router.post('/category', createCategoryController)
+router.get('/category/:id', isAuthenticated, getCategoryByIdController)
 
-router.get('/category/:id', getCategoryByIdController)
+router.get('/categories', isAuthenticated, getCategoriesByUserController)
 
-router.get('/categories', getCategoriesByUserController)
+router.post('/category/:id/update', isAuthenticated, updateCategoryController)
 
-router.put('/category', updateCategoryController)
+router.post('/category/:id/delete', isAuthenticated, deleteCategoryController)
 
 export default router
