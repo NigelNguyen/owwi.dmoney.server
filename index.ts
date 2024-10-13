@@ -57,7 +57,7 @@ app.use(
 )
 
 app.use(express.json())
-app.use(express.static(path.join(__dirname, 'ui')));
+app.use(express.static(path.join(__dirname, 'ui', 'dist')));
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {
   const sessionID = cookiesParser(req.headers.cookie || '').sessionID
@@ -88,7 +88,7 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
 })
 
 app.use('/', (req, res)=>{
-  return res.sendFile(path.join(__dirname, 'ui', 'index.html'))
+  return res.sendFile(path.join(__dirname, 'ui', 'dist', 'index.html'))
 })
 
 app.use(authRouter)
