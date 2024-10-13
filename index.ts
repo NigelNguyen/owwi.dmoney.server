@@ -15,6 +15,7 @@ import categoryRouter from './routes/category'
 import partnerRouter from './routes/partner'
 import typeRouter from './routes/type'
 import statisticRouter from './routes/statistic'
+import path from 'path'
 
 const app = express()
 dotenv.config()
@@ -56,6 +57,7 @@ app.use(
 )
 
 app.use(express.json())
+app.use(express.static(path.join(__dirname, 'ui', 'dist')));
 
 app.use(async (req: Request, res: Response, next: NextFunction) => {
   const sessionID = cookiesParser(req.headers.cookie || '').sessionID
@@ -92,6 +94,10 @@ app.use(categoryRouter)
 app.use(partnerRouter)
 app.use(typeRouter)
 app.use(statisticRouter)
+
+app.use('/', (req, res)=>{
+  return res.sendFile(path.join(__dirname, 'ui', "dist", 'index.html'))
+})
 
 mongoose.connect(MONGO_URI).then(() => {
   app.listen(PORT, () => {

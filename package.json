@@ -6,6 +6,7 @@
   "scripts": {
     "vercel-build": "echo hello",
     "dev": "nodemon index.ts",
+    "prestart": "cd ./ui && npm install && npm run build",
     "start": "node index.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
