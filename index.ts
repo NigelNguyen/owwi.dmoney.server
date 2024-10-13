@@ -87,6 +87,10 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   return next()
 })
 
+app.use('/', (req, res)=>{
+  return res.sendFile(path.join(__dirname, 'ui', "dist", 'index.html'))
+})
+
 app.use(authRouter)
 app.use(transactionRouter)
 app.use(recordRouter)
@@ -94,10 +98,6 @@ app.use(categoryRouter)
 app.use(partnerRouter)
 app.use(typeRouter)
 app.use(statisticRouter)
-
-app.use('/', (req, res)=>{
-  return res.sendFile(path.join(__dirname, 'ui', "dist", 'index.html'))
-})
 
 mongoose.connect(MONGO_URI).then(() => {
   app.listen(PORT, () => {
