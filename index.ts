@@ -87,7 +87,10 @@ app.use(async (req: Request, res: Response, next: NextFunction) => {
   return next()
 })
 
-app.get('/', (req, res)=>{
+app.get('*', (req, res, next)=>{
+  if (req.url.includes("/api")){
+    return next()
+  }
   return res.sendFile(path.join(__dirname, 'ui', 'dist', 'index.html'))
 })
 
